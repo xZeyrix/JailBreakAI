@@ -2,7 +2,7 @@ from aiogram import Router, types, F
 from aiogram.filters import Command
 from config import GROQ_TOKEN, DEV_ID
 from groq import AsyncGroq
-from illegalPrompt import prompt
+from sexualPrompt import prompt
 
 router = Router()
 client = AsyncGroq(api_key=GROQ_TOKEN)
@@ -37,8 +37,9 @@ async def ai_chat_handler(message: types.Message) -> None:
         ],
 
         # The language model which will generate the completion.
-        model="llama-3.1-8b-instant",
-        #model="llama-3.3-70b-versatile",
+        # model="llama-3.1-8b-instant",
+        model="llama-3.3-70b-versatile",
+        # model="openai/gpt-oss-120b",
 
         #
         # Optional parameters
@@ -47,7 +48,7 @@ async def ai_chat_handler(message: types.Message) -> None:
         # Controls randomness: lowering results in less random completions.
         # As the temperature approaches zero, the model will become
         # deterministic and repetitive.
-        temperature=0.7,
+        temperature=0.82,
 
         # The maximum number of tokens to generate. Requests can use up to
         # 2048 tokens shared between prompt and completion.
@@ -66,4 +67,8 @@ async def ai_chat_handler(message: types.Message) -> None:
         # If set, partial message deltas will be sent.
         stream=False,
     )
-    await message.answer(chat_completion.choices[0].message.content)
+    try:
+        await message.answer(chat_completion.choices[0].message.content)
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        await message.answer("Произошла ошибка")
